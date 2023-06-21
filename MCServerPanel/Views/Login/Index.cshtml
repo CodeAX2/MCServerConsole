@@ -1,0 +1,17 @@
+@{
+    ViewData["Title"] = "Login";
+}
+
+@if (ViewBag.ErrorMessage != null)
+{
+        <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+}
+
+<div class="text-center">
+    <h1>Login Here</h1>
+    <form method="post">
+        <label>Passphrase</label>
+        <input type="password" name="password"></input>
+        <input type="submit" value="Submit">
+    </form>
+</div>
