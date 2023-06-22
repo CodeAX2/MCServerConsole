@@ -17,7 +17,7 @@ public class ServerConsoleController : ControllerBase {
 				string[] lines = fullLog.Split(
 					new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None
 				);
-				string[] shortened = lines.Skip(lineStart).ToArray();
+				string[] shortened = lines.Skip(lineStart - 1).ToArray();
 
 				object returnedObj = new {
 					log = string.Join("\n", shortened),
