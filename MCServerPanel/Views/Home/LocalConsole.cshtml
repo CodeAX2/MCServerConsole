@@ -15,7 +15,7 @@
         if (serverPath != "null") {
             try {
                 const response = await fetch(
-                    `/api/ServerConsole/?serverPath=${serverPath}?lineStart=${previousLineStart}`
+                    `/api/ServerConsole/?serverPath=${serverPath}&lineStart=${previousLineStart}`
                 );
                 if (response.ok) {
                     const data = await response.json();
