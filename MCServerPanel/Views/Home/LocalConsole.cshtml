@@ -50,7 +50,7 @@
 
                     if (previousLineStart != data["newLineStart"]) {
                         let consoleDiv = document.getElementById("console");
-                        consoleDiv.scrollTop = consoleDiv.scrollHeight;
+                        scrollTo(consoleDiv, consoleDiv.scrollHeight, 500);
                     }
 
                     previousLineStart = data["newLineStart"];
@@ -67,6 +67,18 @@
             setTimeout(() => { updateConsole(true); }, 1000);
     }
     document.addEventListener("DOMContentLoaded", () => { updateConsole(true); });
+
+    function scrollTo(element, to, duration) {
+        if (duration <= 0) return;
+        var difference = to - element.scrollTop;
+        var perTick = difference / duration * 10;
+
+        setTimeout(function() {
+            element.scrollTop = element.scrollTop + perTick;
+            if (element.scrollTop === to) return;
+            scrollTo(element, to, duration - 10);
+        }, 10);
+}
 
 </script>
 
