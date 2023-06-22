@@ -22,9 +22,12 @@ body {
 }
 
 .logTimestamp {
-  color: rgb(0, 0, 255);
+  color: lightblue;
+  margin-right: 10px;
 }
 
 .logSource {
-  color: gray;
+  color: lightgray;
+  display: inline-block;
+  width: 170px;
 }

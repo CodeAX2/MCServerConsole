@@ -38,7 +38,7 @@
 
                     // Surround sources with spans
                     newData = newData.replace(
-                        /\[[A-z| |\-|0-9]*\/[A-z| |\-|0-9]*\]/g, 
+                        /\[[A-z| |\-|0-9]*\/[A-z| |\-|0-9]*\]\:/g, 
                         "<span class=\"logSource\">$&</span>"
                     );
 
