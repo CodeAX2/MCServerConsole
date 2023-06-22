@@ -18,14 +18,6 @@
     color: rgb(0, 255, 0);
 }
 
-.logTimestamp {
-    color: rgb(0, 0, 255);
-}
-
-.logSource {
-    color: gray;
-}
-
 #consoleInput {
     border-radius: 0!important;
 }
