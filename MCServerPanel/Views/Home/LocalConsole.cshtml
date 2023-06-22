@@ -4,6 +4,8 @@
 
 <script>
 
+    let previousLog = "";
+
     async function updateConsole(restart) {
 
         const directorySelect = document.getElementById("directorySelect");
@@ -18,28 +20,31 @@
                 if (response.ok) {
                     const data = await response.json();
 
-                    let innerHTML = data["log"];
+                    let rawData = data["log"];
+                    let i = 0;
+                    while (rawData[i] == previousLog[i]) i++;
+                    
+                    let newData = rawData.substring(i);
+
+                    previousLog = rawData;
 
                     // Replace < >
-                    innerHTML = innerHTML.replace(/\</g,"&lt;");
-                    innerHTML = innerHTML.replace(/\>/g,"&gt;");
-
-                    // Replace newlines with <br>
-                    innerHTML = innerHTML.replace(/(?:\r\n|\r|\n)/g, "<br>");
+                    newData = newData.replace(/\</g,"&lt;");
+                    newData = newData.replace(/\>/g,"&gt;");
 
                     // Surround timestamps with spans
-                    innerHTML = innerHTML.replace(
+                    newData = newData.replace(
                         /\[[0-9]{2}:[0-9]{2}:[0-9]{2}\]/g, 
                         "<span class=\"logTimestamp\">$&</span>"
                     );
 
                     // Surround sources with spans
-                    innerHTML = innerHTML.replace(
+                    newData = newData.replace(
                         /\[[A-z| |\-|0-9]*\/[A-z| |\-|0-9]*\]/g, 
                         "<span class=\"logSource\">$&</span>"
                     );
 
-                    consoleLog.innerHTML = innerHTML;
+                    consoleLog.innerHTML += newData;
 
                 } else {
                     const responseText = await response.text();
