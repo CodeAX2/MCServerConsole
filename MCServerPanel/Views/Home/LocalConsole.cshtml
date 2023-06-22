@@ -18,7 +18,28 @@
                 if (response.ok) {
                     const data = await response.json();
 
-                    consoleLog.innerHTML = data.replace(/(?:\r\n|\r|\n)/g, "<br>");
+                    let innerHTML = data["log"];
+
+                    // Replace < >
+                    innerHTML = innerHTML.replace(/\</g,"&lt;");
+                    innerHTML = innerHTML.replace(/\>/g,"&gt;");
+
+                    // Replace newlines with <br>
+                    innerHTML = innerHTML.replace(/(?:\r\n|\r|\n)/g, "<br>");
+
+                    // Surround timestamps with spans
+                    innerHTML = innerHTML.replace(
+                        /\[[0-9]{2}:[0-9]{2}:[0-9]{2}\]/g, 
+                        "<span class=\"logTimestamp\">$1</span>"
+                    );
+
+                    // Surround sources with spans
+                    innerHTML = innerHTML.replace(
+                        /\[[A-z| |\-|0-9]*\/[A-z| |\-|0-9]*\]/g, 
+                        "<span class=\"logSource\">$1</span>"
+                    );
+
+                    consoleLog.innerHTML = innerHTML;
 
                 } else {
                     const responseText = await response.text();
@@ -39,7 +60,7 @@
 
 <select class="form-select" id="directorySelect" onchange="updateConsole(false)">
   <option selected disabled value="null">Choose a Server Directory</option>
-  <option value="server/dir/1">server/dir/1</option>
+  <option value="/home/jacobhofer/MinecraftTest">Test Directory 1</option>
   <option value="server/dir/2">server/dir/2</option>
   <option value="server/dir/3">server/dir/3</option>
 </select>
