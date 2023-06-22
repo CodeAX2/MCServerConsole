@@ -42,7 +42,7 @@
                         "<span class=\"logSource\">$&</span>"
                     );
 
-                    consoleLog.innerHTML += newData;
+                    consoleLog.insertAdjacentHTML(newData);
 
                 } else {
                     const responseText = await response.text();
