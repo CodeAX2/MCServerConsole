@@ -6,4 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MineStat" Version="3.1.2" />
+  </ItemGroup>
+
 </Project>

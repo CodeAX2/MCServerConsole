@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using MCServerPanel.Models;
+using MCServerPanel.Data;
 
 namespace MCServerPanel.Controllers;
 
@@ -11,10 +12,9 @@ public class HomeController : Controller {
 		_logger = logger;
 	}
 
-	private IActionResult? RequireValidSession() {
-		string? token = Request.Cookies["session-token"];
-		if (token == null || !Data.AuthCache.IsSessionAuthorized(token)) {
-			if (token != null)
+	private IActionResult? RequireValidSession(IRequestCookieCollection cookies) {
+		if (!AuthCache.IsSessionAuthorized(cookies)) {
+			if (AuthCache.HasSession(cookies))
 				TempData["Errors"] = "Invalid Session";
 			return RedirectToAction("Index", "Login");
 		}
@@ -23,18 +23,26 @@ public class HomeController : Controller {
 
 	public IActionResult Index() {
 
-		IActionResult? result = RequireValidSession();
+		IActionResult? result = RequireValidSession(Request.Cookies);
 		if (result != null)
 			return result;
 
 		return View();
 	}
 
-	public IActionResult Console() {
-		IActionResult? result = RequireValidSession();
+	public IActionResult LocalConsole() {
+		IActionResult? result = RequireValidSession(Request.Cookies);
 		if (result != null)
 			return result;
 		return View();
+	}
+
+	public IActionResult Logout() {
+		IActionResult? result = RequireValidSession(Request.Cookies);
+		if (result != null)
+			return result;
+		AuthCache.RemoveSession(Request.Cookies[AuthCache.AUTH_COOKIE]);
+		return RedirectToAction("Index", "Login");
 	}
 
 	[ResponseCache(

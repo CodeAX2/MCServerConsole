@@ -19,21 +19,21 @@ public class LoginController : Controller {
 	[HttpGet()]
 	public IActionResult Index() {
 
-		string? token = Request.Cookies["session-token"];
-		if (token != null) {
-			if (Data.AuthCache.IsSessionAuthorized(token)) {
-				return RedirectToAction("Index", "Home");
-			} else {
-				Response.Cookies.Delete("session-token");
-				ViewBag.ErrorMessage = TempData["Errors"];
-			}
+		if (Data.AuthCache.IsSessionAuthorized(Request.Cookies)) {
+			return RedirectToAction("Index", "Home");
+		} else {
+			Response.Cookies.Delete(Data.AuthCache.AUTH_COOKIE);
+			ViewBag.ErrorMessage = TempData["Errors"];
 		}
 
 		return View();
 	}
 
 	[HttpPost()]
-	public IActionResult OnPost(string password) {
+	public IActionResult OnPost(string? password) {
+
+		password ??= "";
+
 		if (password.Equals("Test123")) {
 			// lol, lmao
 
@@ -46,7 +46,9 @@ public class LoginController : Controller {
 			string sessionToken = r.Next(10000000).ToString();
 			Data.AuthCache.AddAuthorizedSession(sessionToken);
 
-			Response.Cookies.Append("session-token", sessionToken, options);
+			Response.Cookies.Append(
+				Data.AuthCache.AUTH_COOKIE, sessionToken, options
+			);
 			return RedirectToAction("Index", "Home");
 		} else {
 			ViewBag.ErrorMessage = "Incorrect Password";

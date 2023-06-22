@@ -2,6 +2,8 @@ namespace MCServerPanel.Data;
 
 public class AuthCache {
 
+	public static readonly string AUTH_COOKIE = "session-token";
+
 	private static readonly object locker = new object();
 	private static Dictionary<string, DateTime> authorizedSessionTokens;
 
@@ -14,6 +16,24 @@ public class AuthCache {
 		lock (locker) {
 			authorizedSessionTokens[sessionToken] = DateTime.Now;
 		}
+	}
+
+	public static void RemoveSession(string sessionToken) {
+		lock (locker) {
+			authorizedSessionTokens.Remove(sessionToken);
+		}
+	}
+
+	public static bool IsSessionAuthorized(IRequestCookieCollection cookies) {
+		string? sessionToken = cookies[AUTH_COOKIE];
+		if (sessionToken != null)
+			return IsSessionAuthorized(sessionToken);
+		return false;
+	}
+
+	public static bool HasSession(IRequestCookieCollection cookies) {
+		string? sessionToken = cookies[AUTH_COOKIE];
+		return sessionToken != null;
 	}
 
 	public static bool IsSessionAuthorized(string sessionToken) {
@@ -37,6 +57,7 @@ public class AuthCache {
 			var invalidSessions =
 				authorizedSessionTokens.Where(kv => IsTimeInvalid(kv.Value));
 			foreach (var session in invalidSessions) {
+				System.Console.WriteLine("Removed session: " + session);
 				authorizedSessionTokens.Remove(session.Key);
 			}
 		}

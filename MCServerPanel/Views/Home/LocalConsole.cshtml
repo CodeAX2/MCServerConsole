@@ -1,0 +1,56 @@
+﻿@{
+    ViewData["Title"] = "Local Server Console";
+}
+
+<script>
+
+    async function updateConsole(restart) {
+
+        const directorySelect = document.getElementById("directorySelect");
+        const consoleLog = document.getElementById("consoleLog");
+
+        const serverPath = directorySelect.value;
+        if (serverPath != "null") {
+            try {
+                const response = await fetch(
+                    `/api/ServerConsole/?serverPath=${serverPath}`
+                );
+                if (response.ok) {
+                    const data = await response.json();
+
+                    consoleLog.innerHTML = data.replace(/(?:\r\n|\r|\n)/g, "<br>");
+
+                } else {
+                    const responseText = await response.text();
+                    consoleLog.innerHTML = responseText.replace(/(?:\r\n|\r|\n)/g, "<br>");
+                }
+            } catch (error) {
+                console.error("Error: " + error);
+            }
+        }
+        if (restart)
+            setTimeout(() => { updateConsole(true); }, 1000);
+    }
+    document.addEventListener("DOMContentLoaded", () => { updateConsole(true); });
+
+</script>
+
+<h1>@ViewData["Title"]</h1>
+
+<select class="form-select" id="directorySelect" onchange="updateConsole(false)">
+  <option selected disabled value="null">Choose a Server Directory</option>
+  <option value="server/dir/1">server/dir/1</option>
+  <option value="server/dir/2">server/dir/2</option>
+  <option value="server/dir/3">server/dir/3</option>
+</select>
+
+<div id="console" class="bg-dark text-white">
+    <span class="logLine logStart">> START OF LOG</span><br>
+    <p id="consoleLog" class="logLine">
+    </p>
+
+</div>
+<div class="input-group">
+    <input id="consoleInput" class="form-control bg-dark text-white" type="text" placeholder="Enter a command here"></input>
+</div>
+
