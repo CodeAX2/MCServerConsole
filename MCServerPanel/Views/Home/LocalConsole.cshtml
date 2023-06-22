@@ -6,6 +6,11 @@
 
     let previousLineStart = 0;
 
+    async function selectConsole() {
+        previousLineStart = 0;
+        await updateConsole(false);
+    }
+
     async function updateConsole(restart) {
 
         const directorySelect = document.getElementById("directorySelect");
@@ -21,7 +26,6 @@
                     const data = await response.json();
 
                     let newData = data["log"];
-                    previousLineStart = data["newLineStart"];
 
                     // Replace < >
                     newData = newData.replace(/\</g,"&lt;");
@@ -44,6 +48,13 @@
 
                     consoleLog.insertAdjacentHTML("beforeend", newData);
 
+                    if (previousLineStart != data["newLineStart"]) {
+                        let consoleDiv = document.getElementById("console");
+                        consoleDiv.scrollTop = consoleDiv.scrollHeight;
+                    }
+
+                    previousLineStart = data["newLineStart"];
+
                 } else {
                     const responseText = await response.text();
                     consoleLog.innerHTML = responseText.replace(/(?:\r\n|\r|\n)/g, "<br>");
@@ -61,7 +72,7 @@
 
 <h1>@ViewData["Title"]</h1>
 
-<select class="form-select" id="directorySelect" onchange="updateConsole(false)">
+<select class="form-select" id="directorySelect" onchange="selectConsole()">
   <option selected disabled value="null">Choose a Server Directory</option>
   <option value="/home/jacobhofer/MinecraftTest">Test Directory 1</option>
   <option value="server/dir/2">server/dir/2</option>
