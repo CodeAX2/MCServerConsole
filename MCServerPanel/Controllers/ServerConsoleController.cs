@@ -7,13 +7,22 @@ namespace MCServerPanel.Controllers {
 public class ServerConsoleController : ControllerBase {
 
 	[HttpGet()]
-	public IActionResult OnGet(string serverPath) {
+	public IActionResult OnGet(string serverPath, int lineStart) {
 
 		if (AuthCache.IsSessionAuthorized(Request.Cookies)) {
 			try {
-				string logOutput =
+				string fullLog =
 					System.IO.File.ReadAllText(serverPath + "/logs/latest.log");
-				object returnedObj = new { log = logOutput };
+
+				string[] lines = fullLog.Split(
+					new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None
+				);
+				string[] shortened = lines.Skip(lineStart).ToArray();
+
+				object returnedObj = new {
+					log = string.Join("\n", shortened),
+					newLineStart = lines.Length
+				};
 				return StatusCode(200, returnedObj);
 			} catch (UnauthorizedAccessException e) {
 				return StatusCode(

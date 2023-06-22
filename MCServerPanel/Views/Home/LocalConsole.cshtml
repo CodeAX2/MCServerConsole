@@ -4,7 +4,7 @@
 
 <script>
 
-    let previousLog = "";
+    let previousLineStart = 0;
 
     async function updateConsole(restart) {
 
@@ -15,22 +15,20 @@
         if (serverPath != "null") {
             try {
                 const response = await fetch(
-                    `/api/ServerConsole/?serverPath=${serverPath}`
+                    `/api/ServerConsole/?serverPath=${serverPath}?lineStart=${previousLineStart}`
                 );
                 if (response.ok) {
                     const data = await response.json();
 
-                    let rawData = data["log"];
-                    let i = 0;
-                    while (rawData[i] == previousLog[i]) i++;
-                    
-                    let newData = rawData.substring(i);
-
-                    previousLog = rawData;
+                    let newData = data["log"];
+                    previousLineStart = data["newLineStart"];
 
                     // Replace < >
                     newData = newData.replace(/\</g,"&lt;");
                     newData = newData.replace(/\>/g,"&gt;");
+
+                    // Replace newlines with <br>
+                    innerHTML = innerHTML.replace(/(?:\r\n|\r|\n)/g, "<br>");
 
                     // Surround timestamps with spans
                     newData = newData.replace(
