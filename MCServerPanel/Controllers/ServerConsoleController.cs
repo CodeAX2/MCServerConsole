@@ -13,7 +13,8 @@ public class ServerConsoleController : ControllerBase {
 			try {
 				string logOutput =
 					System.IO.File.ReadAllText(serverPath + "/logs/latest.log");
-				return StatusCode(200, "{log:\"logOutput\"}");
+				object returnedObj = new { log = logOutput };
+				return StatusCode(200, returnedObj);
 			} catch (UnauthorizedAccessException e) {
 				return StatusCode(
 					405,
