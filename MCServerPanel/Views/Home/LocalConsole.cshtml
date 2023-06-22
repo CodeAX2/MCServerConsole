@@ -78,7 +78,23 @@
             if (element.scrollTop === to) return;
             scrollTo(element, to, duration - 10);
         }, 10);
-}
+    }
+
+    function submitCommand(event) {
+        event.preventDefault();
+        let consoleInput = document.getElementById("consoleInput"); 
+        let command = consoleInput.value;
+        consoleInput.value = "";
+        // Issue command
+        fetch("/api/ServerConsole", {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(command)
+        });
+    }
 
 </script>
 
@@ -97,7 +113,10 @@
     </p>
 
 </div>
-<div class="input-group">
-    <input id="consoleInput" class="form-control bg-dark text-white" type="text" placeholder="Enter a command here"></input>
-</div>
+<form onsubmit="submitCommand(event)">
+    <div class="input-group">
+        <input id="consoleInput" class="form-control bg-dark text-white" type="text" placeholder="Enter a command here"></input>
+        <input type="submit" class="btn btn-primary" style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
+    </div>
+</form>
 

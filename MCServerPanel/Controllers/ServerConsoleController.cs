@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using MCServerPanel.Data;
+using MinecraftServerRCON;
 
 namespace MCServerPanel.Controllers {
 [ApiController]
@@ -36,6 +37,18 @@ public class ServerConsoleController : ControllerBase {
 					"Could not find log file: " + serverPath + "/logs/latest.log"
 				);
 			}
+		}
+
+		return StatusCode(401, "Unauthorized Session");
+	}
+
+	[HttpPost()]
+	public IActionResult OnPost([FromBody] string command) {
+		if (AuthCache.IsSessionAuthorized(Request.Cookies)) {
+			using RCONClient rcon = RCONClient.INSTANCE;
+			rcon.setupStream("localhost", 25575);
+			rcon.sendMessage(RCONMessageType.Command, command);
+			return StatusCode(200, "Maybe success");
 		}
 
 		return StatusCode(401, "Unauthorized Session");

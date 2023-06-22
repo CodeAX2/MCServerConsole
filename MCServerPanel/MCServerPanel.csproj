@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="MineStat" Version="3.1.2" />
+    <PackageReference Include="RCONServer" Version="1.0.2" />
   </ItemGroup>
 
 </Project>
